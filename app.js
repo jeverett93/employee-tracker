@@ -238,9 +238,9 @@ const mainMenu = () => {
                     inquirer.prompt(questions).then((response) => { });
                     break;
 
-                case "See Manager Employees":
-                    inquirer.prompt(questions).then((response) => { });
-                    break;
+                // case "See Manager Employees":
+                //     inquirer.prompt(questions).then((response) => { });
+                //     break;
 
                 case "Finish":
                     connection.end();
@@ -250,3 +250,53 @@ const mainMenu = () => {
             }
         })
 };
+
+const addDept = [
+    {
+      type: "input",
+      message: "What department do you want to add?",
+      name: "dept_name",
+    },
+  ];
+  
+  const addRole = [
+    {
+      type: "input",
+      message: "What role do you want to add?",
+      name: "title",
+      
+    },
+  
+    {
+      type: "input",
+      message: "What is the salary for this role?",
+      name: "salary",
+    },
+    {
+      type: "input",
+      message: "What is the department ID for this role:",
+      name: "dept_id",
+    },
+  ];
+  const addEmployee = [
+    {
+      type: "input",
+      message: "What is the employee's first name?",
+      name: "first_name",
+    },
+    {
+      type: "input",
+      message: "What is the employee's last name?",
+      name: "last_name",
+    },
+    {
+      type: "input",
+      message: "What is the employee's role ID?",
+      name: "role_id",
+    },
+    {
+      type: "input",
+      message: "What is the ID of the employee's manager?",
+      name: "manager_id",
+    },
+  ];
