@@ -73,7 +73,7 @@ const mainMenu = () => {
                     connection.query("SELECT * FROM departments ", function (err, res) {
                         if (err) throw err;
                         res.length > 0 && console.table(res);
-                        ask
+                        inquirer
                             .prompt([
                                 {
                                     type: "input",
