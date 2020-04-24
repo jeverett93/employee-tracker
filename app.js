@@ -42,7 +42,7 @@ const mainMenu = () => {
                         connection.query(
                             "INSERT INTO departments SET ?",
                             {
-                                name: answer.dept_name,
+                                dept_name: answer.dept_name,
                             },
                             function (err) {
                                 if (err) throw err;
