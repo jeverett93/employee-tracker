@@ -25,7 +25,7 @@ const mainMenu = () => {
                     "Delete Roles",
                     "Add Employee",
                     "View Employees",
-                    "Updated Employee Role",
+                    "Update Employee Role",
                     "Update Employee Managers",
                     "Remove Employee",
                     "Finish",
@@ -235,7 +235,43 @@ const mainMenu = () => {
                     break;
 
                 case "Update Employee Role":
-                    inquirer.prompt(questions).then((response) => { });
+                    connection.query("SELECT * FROM roles",
+                        function (err, roles) {
+                            if (err) throw err;
+                            connection.query("SELECT * FROM employees",
+                                function (err, employees) {
+                                    if (err) throw err;
+                                    inquirer
+                                        .prompt([
+                                            {
+                                                type: "list",
+                                                message: "Which employee would you like to update?",
+                                                name: "empId",
+                                                choices: () => employees.map(employee => `${employee.id} ${employee.first_name} ${employee.last_name}`) 
+                                            },
+                                            {
+                                                type: "list",
+                                                message: "What would you like to update their role to?",
+                                                name: "empRole",
+                                                choices: () => roles.map(role => `${role.id} ${role.title}`)
+                                            }
+                                        ])
+                                        .then((answers) => {
+                                            connection.query(
+                                                "UPDATE employees SET role_id=? WHERE id=?",
+                                                [answers.empRole.slice(0,1), answers.empId.slice(0,1)],
+                                                function(err, res) {
+                                                    if (err) throw err;
+                                                    console.log(res)
+                                                }
+                                            )
+                                        //     console.log(answers.empId);
+                                        //     console.log(answers.empId.slice(0,1));
+                                        //     console.log(answers.empRole);
+                                        });
+                                })
+                        })
+
                     break;
 
                 // case "See Manager Employees":
@@ -253,50 +289,50 @@ const mainMenu = () => {
 
 const addDept = [
     {
-      type: "input",
-      message: "What department do you want to add?",
-      name: "dept_name",
+        type: "input",
+        message: "What department do you want to add?",
+        name: "dept_name",
     },
-  ];
-  
-  const addRole = [
+];
+
+const addRole = [
     {
-      type: "input",
-      message: "What role do you want to add?",
-      name: "title",
-      
+        type: "input",
+        message: "What role do you want to add?",
+        name: "title",
+
     },
-  
+
     {
-      type: "input",
-      message: "What is the salary for this role?",
-      name: "salary",
-    },
-    {
-      type: "input",
-      message: "What is the department ID for this role:",
-      name: "dept_id",
-    },
-  ];
-  const addEmployee = [
-    {
-      type: "input",
-      message: "What is the employee's first name?",
-      name: "first_name",
+        type: "input",
+        message: "What is the salary for this role?",
+        name: "salary",
     },
     {
-      type: "input",
-      message: "What is the employee's last name?",
-      name: "last_name",
+        type: "input",
+        message: "What is the department ID for this role:",
+        name: "dept_id",
+    },
+];
+const addEmployee = [
+    {
+        type: "input",
+        message: "What is the employee's first name?",
+        name: "first_name",
     },
     {
-      type: "input",
-      message: "What is the employee's role ID?",
-      name: "role_id",
+        type: "input",
+        message: "What is the employee's last name?",
+        name: "last_name",
     },
     {
-      type: "input",
-      message: "What is the ID of the employee's manager?",
-      name: "manager_id",
+        type: "input",
+        message: "What is the employee's role ID?",
+        name: "role_id",
     },
-  ];
+    {
+        type: "input",
+        message: "What is the ID of the employee's manager?",
+        name: "manager_id",
+    },
+];
