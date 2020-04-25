@@ -202,21 +202,22 @@ const mainMenu = () => {
                     break;
 
                 case "Remove Employee":
-                    connection.query("SELECT * FROM employees", function (err, res) {
+                    connection.query("SELECT * FROM employees", function (err, employees) {
                         if (err) throw err;
-                        res.length > 0 && console.table(res);
+                        employees.length > 0 && console.table(res);
                         inquirer
                             .prompt([
                                 {
-                                    type: "input",
-                                    message: "Enter the ID of the employee you want to remove.",
+                                    type: "list",
+                                    message: "Which employee would you like to remove?",
                                     name: "removeEmployee",
+                                    choices: () => employees.map(employee => `${employee.id} ${employee.first_name} ${employee.last_name}`)
                                 },
                             ])
                             .then((answer) => {
                                 connection.query(
                                     "DELETE FROM employees WHERE id=? ",
-                                    [answer.removeEmployee],
+                                    [answer.removeEmployee.slice(0,1)],
                                     function (err, res) {
                                         if (err) throw err;
                                         connection.query("SELECT * FROM employees", function (
@@ -247,7 +248,7 @@ const mainMenu = () => {
                                                 type: "list",
                                                 message: "Which employee would you like to update?",
                                                 name: "empId",
-                                                choices: () => employees.map(employee => `${employee.id} ${employee.first_name} ${employee.last_name}`) 
+                                                choices: () => employees.map(employee => `${employee.id} ${employee.first_name} ${employee.last_name}`)
                                             },
                                             {
                                                 type: "list",
@@ -259,15 +260,12 @@ const mainMenu = () => {
                                         .then((answers) => {
                                             connection.query(
                                                 "UPDATE employees SET role_id=? WHERE id=?",
-                                                [answers.empRole.slice(0,1), answers.empId.slice(0,1)],
-                                                function(err, res) {
+                                                [answers.empRole.slice(0, 1), answers.empId.slice(0, 1)],
+                                                function (err, res) {
                                                     if (err) throw err;
-                                                    console.log(res)
-                                                }
-                                            )
-                                        //     console.log(answers.empId);
-                                        //     console.log(answers.empId.slice(0,1));
-                                        //     console.log(answers.empRole);
+                                                    res.length > 0 && console.table(res);
+                                                    mainMenu();
+                                                })
                                         });
                                 })
                         })
