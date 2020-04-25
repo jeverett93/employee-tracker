@@ -70,21 +70,22 @@ const mainMenu = () => {
                     break;
 
                 case "Delete Departments":
-                    connection.query("SELECT * FROM departments ", function (err, res) {
+                    connection.query("SELECT * FROM departments", function (err, departments) {
                         if (err) throw err;
-                        res.length > 0 && console.table(res);
+                        departments.length > 0 && console.table(departments);
                         inquirer
                             .prompt([
                                 {
-                                    type: "input",
-                                    message: "Which department id would you like to delete?",
+                                    type: "list",
+                                    message: "Which department would you like to delete?",
                                     name: "deleteDept",
+                                    choices: () => departments.map(department => `${department.id} ${department.dept_name}`)
                                 },
                             ])
                             .then((answer) => {
                                 connection.query(
                                     "DELETE FROM departments WHERE id=? ",
-                                    [answer.deleteDept],
+                                    [answer.deleteDept.slice(0,1)],
                                     function (err, res) {
                                         if (err) throw err;
                                         connection.query("SELECT * FROM departments", function (
@@ -136,21 +137,22 @@ const mainMenu = () => {
                     break;
 
                 case "Delete Roles":
-                    connection.query("SELECT * FROM roles", function (err, res) {
+                    connection.query("SELECT * FROM roles", function (err, roles) {
                         if (err) throw err;
-                        res.length > 0 && console.table(res);
+                        roles.length > 0 && console.table(roles);
                         inquirer
                             .prompt([
                                 {
-                                    type: "input",
-                                    message: "Which role id do you want to delete?",
+                                    type: "list",
+                                    message: "Which role do you want to delete?",
                                     name: "deleteRoles",
+                                    choices: () => roles.map(role => `${role.id} ${role.title}`)
                                 },
                             ])
                             .then((answer) => {
                                 connection.query(
                                     "DELETE FROM roles WHERE id=? ",
-                                    [answer.deleteRoles],
+                                    [answer.deleteRoles.slice(0,1)],
                                     function (err, res) {
                                         if (err) throw err;
                                         connection.query("SELECT * FROM roles", function (
@@ -204,7 +206,7 @@ const mainMenu = () => {
                 case "Remove Employee":
                     connection.query("SELECT * FROM employees", function (err, employees) {
                         if (err) throw err;
-                        employees.length > 0 && console.table(res);
+                        employees.length > 0 && console.table(employees);
                         inquirer
                             .prompt([
                                 {
