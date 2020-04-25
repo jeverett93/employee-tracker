@@ -35,7 +35,6 @@ const mainMenu = () => {
         ])
         .then(res => {
             const userChoice = res.userChoice;
-
             switch (userChoice) {
                 case "Add Department":
                     inquirer.prompt([
@@ -66,7 +65,6 @@ const mainMenu = () => {
                         );
                     });
                     break;
-
                 case "View Departments":
                     connection.query("SELECT * FROM departments", function (err, res) {
                         if (err) throw err;
@@ -74,7 +72,6 @@ const mainMenu = () => {
                         mainMenu();
                     });
                     break;
-
                 case "Delete Departments":
                     connection.query("SELECT * FROM departments", function (err, departments) {
                         if (err) throw err;
@@ -107,13 +104,11 @@ const mainMenu = () => {
                             });
                     });
                     break;
-
                 case "Add Role":
                     connection.query(
                         "SELECT * FROM departments",
                         function (err, departments) {
                             if (err) throw err;
-                            // roles.length > 0 && console.table(roles);
                             inquirer.prompt([
                                 {
                                     type: "input",
@@ -158,7 +153,6 @@ const mainMenu = () => {
                                 });
                         })
                     break;
-
                 case "View Roles":
                     connection.query("SELECT * FROM roles", function (err, res) {
                         if (err) throw err;
@@ -166,7 +160,6 @@ const mainMenu = () => {
                         mainMenu();
                     });
                     break;
-
                 case "Delete Roles":
                     connection.query("SELECT * FROM roles", function (err, roles) {
                         if (err) throw err;
@@ -199,7 +192,6 @@ const mainMenu = () => {
                             });
                     });
                     break;
-
                 case "View Employees":
                     connection.query("SELECT * FROM employees", function (err, res) {
                         if (err) throw err;
@@ -229,7 +221,7 @@ const mainMenu = () => {
                                         },
                                         {
                                             type: "list",
-                                            message: "What is the employee's role ID?",
+                                            message: "What is the employee's role?",
                                             name: "role_id",
                                             choices: () => roles.map(role => `${role.id} ${role.title}`)
                                         },
@@ -267,7 +259,6 @@ const mainMenu = () => {
                                 })
                         })
                     break;
-
                 case "Remove Employee":
                     connection.query("SELECT * FROM employees", function (err, employees) {
                         if (err) throw err;
@@ -299,9 +290,7 @@ const mainMenu = () => {
                                 );
                             });
                     });
-
                     break;
-
                 case "Update Employee Role":
                     connection.query("SELECT * FROM roles",
                         function (err, roles) {
@@ -353,27 +342,3 @@ const mainMenu = () => {
 };
 
 
-// const addEmployee = [
-//     {
-//         type: "input",
-//         message: "What is the employee's first name?",
-//         name: "first_name",
-//     },
-//     {
-//         type: "input",
-//         message: "What is the employee's last name?",
-//         name: "last_name",
-//     },
-//     {
-//         type: "list",
-//         message: "What is the employee's role ID?",
-//         name: "role_id",
-//         choices: () => roles.map(role => `${role.id} ${role.title}`)
-//     },
-//     {
-//         type: "list",
-//         message: "What is the ID of the employee's manager?",
-//         name: "manager_id",
-//         choices: () => employees.map(employee => `${employee.id} ${employee.first_name} ${employee.last_name}`)
-//     },
-// ];
