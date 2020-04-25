@@ -38,7 +38,13 @@ const mainMenu = () => {
 
             switch (userChoice) {
                 case "Add Department":
-                    inquirer.prompt(addDept).then((answer) => {
+                    inquirer.prompt([
+                        {
+                            type: "input",
+                            message: "What department do you want to add?",
+                            name: "dept_name",
+                        },
+                    ]).then((answer) => {
                         connection.query(
                             "INSERT INTO departments SET ?",
                             {
@@ -85,7 +91,7 @@ const mainMenu = () => {
                             .then((answer) => {
                                 connection.query(
                                     "DELETE FROM departments WHERE id=? ",
-                                    [answer.deleteDept.slice(0,1)],
+                                    [answer.deleteDept.slice(0, 1)],
                                     function (err, res) {
                                         if (err) throw err;
                                         connection.query("SELECT * FROM departments", function (
@@ -103,29 +109,54 @@ const mainMenu = () => {
                     break;
 
                 case "Add Role":
-                    inquirer.prompt(addRole).then((answer) => {
-                        connection.query(
-                            "INSERT INTO roles SET ?",
-                            {
-                                title: answer.title,
-                                salary: answer.salary,
-                                dept_id: parseInt(answer.dept_id),
-                            },
-                            function (err) {
-                                if (err) throw err;
-                                console.log("Successfully added role!");
-                                // view the roles
-                                connection.query("SELECT * FROM departments", function (
-                                    err,
-                                    res
-                                ) {
-                                    if (err) throw err;
-                                    res.length > 0 && console.table(res);
-                                    mainMenu();
+                    connection.query(
+                        "SELECT * FROM departments",
+                        function (err, departments) {
+                            if (err) throw err;
+                            // roles.length > 0 && console.table(roles);
+                            inquirer.prompt([
+                                {
+                                    type: "input",
+                                    message: "What role do you want to add?",
+                                    name: "title",
+
+                                },
+                                {
+                                    type: "input",
+                                    message: "What is the salary for this role?",
+                                    name: "salary",
+                                },
+                                {
+                                    type: "list",
+                                    message: "What is the department for this role:",
+                                    name: "dept_id",
+                                    choices: () => departments.map(department => `${department.id} ${department.dept_name}`)
+                                },
+                            ])
+                                .then((answer) => {
+                                    connection.query(
+                                        "INSERT INTO roles SET ?",
+                                        {
+                                            title: answer.title,
+                                            salary: answer.salary,
+                                            dept_id: answer.dept_id.slice(0, 1),
+                                        },
+                                        function (err) {
+                                            if (err) throw err;
+                                            console.log("Successfully added role!");
+                                            // view the roles
+                                            connection.query("SELECT * FROM departments", function (
+                                                err,
+                                                res
+                                            ) {
+                                                if (err) throw err;
+                                                res.length > 0 && console.table(res);
+                                                mainMenu();
+                                            });
+                                        }
+                                    );
                                 });
-                            }
-                        );
-                    });
+                        })
                     break;
 
                 case "View Roles":
@@ -152,7 +183,7 @@ const mainMenu = () => {
                             .then((answer) => {
                                 connection.query(
                                     "DELETE FROM roles WHERE id=? ",
-                                    [answer.deleteRoles.slice(0,1)],
+                                    [answer.deleteRoles.slice(0, 1)],
                                     function (err, res) {
                                         if (err) throw err;
                                         connection.query("SELECT * FROM roles", function (
@@ -177,30 +208,64 @@ const mainMenu = () => {
                     });
                     break;
                 case "Add Employee":
-                    inquirer.prompt(addEmployee).then((answer) => {
-                        connection.query(
-                            "INSERT INTO  employees SET ?",
-                            {
-                                first_name: answer.first_name,
-                                last_name: answer.last_name,
-                                role_id: parseInt(answer.role_id),
-                                manager_id: parseInt(answer.manager_id),
-                            },
-                            function (err) {
-                                if (err) throw err;
-                                console.log("Successfully added an employee!");
-                                // view the employees
-                                connection.query("SELECT * FROM employees", function (
-                                    err,
-                                    res
-                                ) {
-                                    if (err) throw err;
-                                    res.length > 0 && console.table(res);
-                                    mainMenu();
-                                });
-                            }
-                        );
-                    });
+                    connection.query(
+                        "SELECT * FROM roles",
+                        function (err, roles) {
+                            if (err) throw err
+                            connection.query(
+                                "SELECT * FROM employees",
+                                function (err, employees) {
+                                    if (err) throw err
+                                    inquirer.prompt([
+                                        {
+                                            type: "input",
+                                            message: "What is the employee's first name?",
+                                            name: "first_name",
+                                        },
+                                        {
+                                            type: "input",
+                                            message: "What is the employee's last name?",
+                                            name: "last_name",
+                                        },
+                                        {
+                                            type: "list",
+                                            message: "What is the employee's role ID?",
+                                            name: "role_id",
+                                            choices: () => roles.map(role => `${role.id} ${role.title}`)
+                                        },
+                                        {
+                                            type: "list",
+                                            message: "Who is the employee's manager?",
+                                            name: "manager_id",
+                                            choices: () => employees.map(employee => `${employee.id} ${employee.first_name} ${employee.last_name}`)
+                                        },
+                                    ])
+                                        .then((answer) => {
+                                            connection.query(
+                                                "INSERT INTO  employees SET ?",
+                                                {
+                                                    first_name: answer.first_name,
+                                                    last_name: answer.last_name,
+                                                    role_id: parseInt(answer.role_id),
+                                                    manager_id: parseInt(answer.manager_id),
+                                                },
+                                                function (err) {
+                                                    if (err) throw err;
+                                                    console.log("Successfully added an employee!");
+                                                    // view the employees
+                                                    connection.query("SELECT * FROM employees", function (
+                                                        err,
+                                                        res
+                                                    ) {
+                                                        if (err) throw err;
+                                                        res.length > 0 && console.table(res);
+                                                        mainMenu();
+                                                    });
+                                                }
+                                            );
+                                        });
+                                })
+                        })
                     break;
 
                 case "Remove Employee":
@@ -219,7 +284,7 @@ const mainMenu = () => {
                             .then((answer) => {
                                 connection.query(
                                     "DELETE FROM employees WHERE id=? ",
-                                    [answer.removeEmployee.slice(0,1)],
+                                    [answer.removeEmployee.slice(0, 1)],
                                     function (err, res) {
                                         if (err) throw err;
                                         connection.query("SELECT * FROM employees", function (
@@ -287,52 +352,28 @@ const mainMenu = () => {
         })
 };
 
-const addDept = [
-    {
-        type: "input",
-        message: "What department do you want to add?",
-        name: "dept_name",
-    },
-];
 
-const addRole = [
-    {
-        type: "input",
-        message: "What role do you want to add?",
-        name: "title",
-
-    },
-
-    {
-        type: "input",
-        message: "What is the salary for this role?",
-        name: "salary",
-    },
-    {
-        type: "input",
-        message: "What is the department ID for this role:",
-        name: "dept_id",
-    },
-];
-const addEmployee = [
-    {
-        type: "input",
-        message: "What is the employee's first name?",
-        name: "first_name",
-    },
-    {
-        type: "input",
-        message: "What is the employee's last name?",
-        name: "last_name",
-    },
-    {
-        type: "input",
-        message: "What is the employee's role ID?",
-        name: "role_id",
-    },
-    {
-        type: "input",
-        message: "What is the ID of the employee's manager?",
-        name: "manager_id",
-    },
-];
+// const addEmployee = [
+//     {
+//         type: "input",
+//         message: "What is the employee's first name?",
+//         name: "first_name",
+//     },
+//     {
+//         type: "input",
+//         message: "What is the employee's last name?",
+//         name: "last_name",
+//     },
+//     {
+//         type: "list",
+//         message: "What is the employee's role ID?",
+//         name: "role_id",
+//         choices: () => roles.map(role => `${role.id} ${role.title}`)
+//     },
+//     {
+//         type: "list",
+//         message: "What is the ID of the employee's manager?",
+//         name: "manager_id",
+//         choices: () => employees.map(employee => `${employee.id} ${employee.first_name} ${employee.last_name}`)
+//     },
+// ];
