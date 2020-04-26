@@ -193,7 +193,7 @@ const mainMenu = () => {
                     });
                     break;
                 case "View Employees":
-                    connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, roles.id FROM employees INNER JOIN roles ON (employees.role_id = roles.id)", function (err, res) {
+                    connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, roles.id, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)", function (err, res) {
                         if (err) throw err;
                         res.length > 0 && console.table(res);
                         mainMenu();
