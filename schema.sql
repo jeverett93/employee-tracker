@@ -1,3 +1,4 @@
+-- creating database with tables
 DROP DATABASE IF EXISTS tracker_db;
 
 CREATE DATABASE tracker_db;

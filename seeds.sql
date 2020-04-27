@@ -1,3 +1,4 @@
+-- adding initial data into table
 USE tracker_db;
 
 INSERT INTO departments (dept_name)

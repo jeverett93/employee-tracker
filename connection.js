@@ -5,10 +5,10 @@ require("dotenv").config();
 const connection = mysql.createConnection({
   host: "localhost",
 
-  // Your port; if not 3306
+  // PORT
   port: 3306,
 
-  // Your username
+  // Username
   user: "root",
 
   // Your password

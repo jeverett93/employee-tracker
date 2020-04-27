@@ -11,6 +11,7 @@ connection.connect(function (err) {
     mainMenu();
 });
 
+// Menu that gives user options for building team
 const mainMenu = () => {
     inquirer
         .prompt([
@@ -36,6 +37,7 @@ const mainMenu = () => {
         .then(res => {
             const userChoice = res.userChoice;
             switch (userChoice) {
+                // Adding department
                 case "Add Department":
                     inquirer.prompt([
                         {
@@ -52,26 +54,30 @@ const mainMenu = () => {
                             function (err) {
                                 if (err) throw err;
                                 console.log("Successfully added department!");
-                                // show the departments
+                                // showing the departments
                                 connection.query("SELECT departments.id, departments.dept_name, roles.title, roles.salary, employees.first_name, employees.last_name FROM departments LEFT JOIN roles ON (departments.id = roles.dept_id) LEFT JOIN employees ON (roles.id = employees.role_id)", function (
                                     err,
                                     res
                                 ) {
                                     if (err) throw err;
                                     res.length > 0 && console.table(res);
+                                    // sends user back to main menu
                                     mainMenu();
                                 });
                             }
                         );
                     });
                     break;
+                    // Viewing department
                 case "View Departments":
                     connection.query("SELECT departments.id, departments.dept_name, roles.title, roles.salary, employees.first_name, employees.last_name FROM departments LEFT JOIN roles ON (departments.id = roles.dept_id) LEFT JOIN employees ON (roles.id = employees.role_id)", function (err, res) {
                         if (err) throw err;
                         res.length > 0 && console.table(res);
+                        // sends user back to main menu
                         mainMenu();
                     });
                     break;
+                    // Deleting departments
                 case "Delete Departments":
                     connection.query("SELECT departments.id, departments.dept_name, roles.title, roles.salary, employees.first_name, employees.last_name FROM departments LEFT JOIN roles ON (departments.id = roles.dept_id) LEFT JOIN employees ON (roles.id = employees.role_id)", function (err, departments) {
                         if (err) throw err;
@@ -96,7 +102,9 @@ const mainMenu = () => {
                                             res
                                         ) {
                                             if (err) throw err;
+                                            // showing remaining departments
                                             res.length > 0 && console.table(res);
+                                            // sends user back to main menu
                                             mainMenu();
                                         });
                                     }
@@ -104,6 +112,7 @@ const mainMenu = () => {
                             });
                     });
                     break;
+                    // Adding roles
                 case "Add Role":
                     connection.query(
                         "SELECT * FROM departments",
@@ -139,13 +148,14 @@ const mainMenu = () => {
                                         function (err) {
                                             if (err) throw err;
                                             console.log("Successfully added role!");
-                                            // view the roles
+                                            // viewing the roles
                                             connection.query("SELECT roles.id, roles.title, roles.salary, departments.dept_name FROM roles LEFT JOIN departments ON (roles.dept_id = departments.id)", function (
                                                 err,
                                                 res
                                             ) {
                                                 if (err) throw err;
                                                 res.length > 0 && console.table(res);
+                                                // sends user back to main menu
                                                 mainMenu();
                                             });
                                         }
@@ -153,13 +163,16 @@ const mainMenu = () => {
                                 });
                         })
                     break;
+                    // Viewing Roles
                 case "View Roles":
                     connection.query("SELECT roles.id, roles.title, roles.salary, departments.dept_name FROM roles LEFT JOIN departments ON (roles.dept_id = departments.id)", function (err, res) {
                         if (err) throw err;
                         res.length > 0 && console.table(res);
+                        // sends user back to main menu
                         mainMenu();
                     });
                     break;
+                    // Deleting Roles
                 case "Delete Roles":
                     connection.query("SELECT roles.id, roles.title, roles.salary, departments.dept_name FROM roles LEFT JOIN departments ON (roles.dept_id = departments.id)", function (err, roles) {
                         if (err) throw err;
@@ -179,12 +192,14 @@ const mainMenu = () => {
                                     [answer.deleteRoles.slice(0, 2).trim()],
                                     function (err, res) {
                                         if (err) throw err;
+                                        // Viewing remaining roles
                                         connection.query("SELECT roles.id, roles.title, roles.salary, departments.dept_name FROM roles LEFT JOIN departments ON (roles.dept_id = departments.id)", function (
                                             err,
                                             res
                                         ) {
                                             if (err) throw err;
                                             res.length > 0 && console.table(res);
+                                            // sends user back to main menu
                                             mainMenu();
                                         });
                                     }
@@ -192,13 +207,16 @@ const mainMenu = () => {
                             });
                     });
                     break;
+                    // Viewing Employees
                 case "View Employees":
                     connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, roles.id, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)", function (err, res) {
                         if (err) throw err;
                         res.length > 0 && console.table(res);
+                        // sends user back to main menu
                         mainMenu();
                     });
                     break;
+                    // Adding Employee
                 case "Add Employee":
                     connection.query(
                         "SELECT * FROM roles",
@@ -244,13 +262,14 @@ const mainMenu = () => {
                                                 function (err) {
                                                     if (err) throw err;
                                                     console.log("Successfully added an employee!");
-                                                    // view the employees
+                                                    // viewing the employees
                                                     connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, roles.id, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)", function (
                                                         err,
                                                         res
                                                     ) {
                                                         if (err) throw err;
                                                         res.length > 0 && console.table(res);
+                                                        // sends user back to main menu
                                                         mainMenu();
                                                     });
                                                 }
@@ -259,6 +278,7 @@ const mainMenu = () => {
                                 })
                         })
                     break;
+                    // Deleting Employee
                 case "Remove Employee":
                     connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)", function (err, employees) {
                         if (err) throw err;
@@ -278,12 +298,14 @@ const mainMenu = () => {
                                     [answer.removeEmployee.slice(0, 2).trim()],
                                     function (err, res) {
                                         if (err) throw err;
+                                        // Viewing Remaining Employees
                                         connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)", function (
                                             err,
                                             res
                                         ) {
                                             if (err) throw err;
                                             res.length > 0 && console.table(res);
+                                            // sends user back to main menu
                                             mainMenu();
                                         });
                                     }
@@ -291,6 +313,7 @@ const mainMenu = () => {
                             });
                     });
                     break;
+                    // Updating role of employee
                 case "Update Employee Role":
                     connection.query("SELECT roles.id, roles.title, roles.salary, departments.dept_name FROM roles LEFT JOIN departments ON (roles.dept_id = departments.id)",
                         function (err, roles) {
@@ -321,6 +344,7 @@ const mainMenu = () => {
                                                     if (err) throw err;
                                                     console.log("Successfully updated employee!")
                                                     connection.query(
+                                                        // viewing remaining employees
                                                         "SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, roles.id, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)",
                                                         function (
                                                             err,
@@ -328,6 +352,7 @@ const mainMenu = () => {
                                                         ) {
                                                             if (err) throw err;
                                                             res.length > 0 && console.table(res);
+                                                            // sends user back to main menu
                                                             mainMenu();
                                                         })
                                                 })
@@ -335,6 +360,7 @@ const mainMenu = () => {
                                 })
                         })
                     break;
+                    // User is done and connection ends
                 case "Finish":
                     connection.end();
                     break;
