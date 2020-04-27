@@ -4,6 +4,7 @@ const inquirer = require("inquirer");
 // importing connection file
 const connection = require("./connection");
 
+// SQL Connection
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId + "\n");
@@ -87,7 +88,7 @@ const mainMenu = () => {
                             .then((answer) => {
                                 connection.query(
                                     "DELETE FROM departments WHERE id = ? ",
-                                    [answer.deleteDept.slice(0,1)],
+                                    [answer.deleteDept.slice(0,2).trim()],
                                     function (err, res) {
                                         if (err) throw err;
                                         connection.query("SELECT departments.id, departments.dept_name, roles.title, roles.salary, employees.first_name, employees.last_name FROM departments LEFT JOIN roles ON (departments.id = roles.dept_id) LEFT JOIN employees ON (roles.id = employees.role_id)", function (
@@ -133,7 +134,7 @@ const mainMenu = () => {
                                         {
                                             title: answer.title,
                                             salary: answer.salary,
-                                            dept_id: answer.dept_id.slice(0, 1),
+                                            dept_id: answer.dept_id.slice(0, 2).trim(),
                                         },
                                         function (err) {
                                             if (err) throw err;
@@ -175,7 +176,7 @@ const mainMenu = () => {
                             .then((answer) => {
                                 connection.query(
                                     "DELETE FROM roles WHERE id=? ",
-                                    [answer.deleteRoles.slice(0, 1)],
+                                    [answer.deleteRoles.slice(0, 2).trim()],
                                     function (err, res) {
                                         if (err) throw err;
                                         connection.query("SELECT roles.id, roles.title, roles.salary, departments.dept_name FROM roles LEFT JOIN departments ON (roles.dept_id = departments.id)", function (
@@ -237,8 +238,8 @@ const mainMenu = () => {
                                                 {
                                                     first_name: answer.first_name,
                                                     last_name: answer.last_name,
-                                                    role_id: parseInt(answer.role_id),
-                                                    manager_id: parseInt(answer.manager_id),
+                                                    role_id: answer.role_id.slice(0,2).trim(),
+                                                    manager_id: answer.manager_id.slice(0,2).trim(),
                                                 },
                                                 function (err) {
                                                     if (err) throw err;
@@ -274,7 +275,7 @@ const mainMenu = () => {
                             .then((answer) => {
                                 connection.query(
                                     "DELETE FROM employees WHERE id=? ",
-                                    [answer.removeEmployee.slice(0, 1)],
+                                    [answer.removeEmployee.slice(0, 2).trim()],
                                     function (err, res) {
                                         if (err) throw err;
                                         connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)", function (
@@ -294,7 +295,7 @@ const mainMenu = () => {
                     connection.query("SELECT roles.id, roles.title, roles.salary, departments.dept_name FROM roles LEFT JOIN departments ON (roles.dept_id = departments.id)",
                         function (err, roles) {
                             if (err) throw err;
-                            connection.query("SELECT employees.id, employees.first_name, employees.last_name, employees.role_id, roles.title, roles.salary, roles.id, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)",
+                            connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)",
                                 function (err, employees) {
                                     if (err) throw err;
                                     inquirer
@@ -315,7 +316,7 @@ const mainMenu = () => {
                                         .then((answers) => {
                                             connection.query(
                                                 "UPDATE employees SET role_id=? WHERE id=?",
-                                                [answers.empRole.slice(0, 1), answers.empId.slice(0, 1)],
+                                                [answers.empRole.slice(0, 1), answers.empId.slice(0, 2).trim()],
                                                 function (err, res) {
                                                     if (err) throw err;
                                                     console.log("Successfully updated employee!")
