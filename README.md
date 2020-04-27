@@ -7,7 +7,7 @@
 ## <h2 id="description">Description</h2>
 This is a command-line application that allows an owner or manager to view, add, update, and delete a company's employees, roles, and departments.
 
-![Image of Application](assets/readme_demo.gif)
+![Image of Application](assets\appdemo.gif)
 
 ## Table of Contents   
 * <a href="#description">Description</a> 
