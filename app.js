@@ -26,7 +26,6 @@ const mainMenu = () => {
                     "Add Employee",
                     "View Employees",
                     "Update Employee Role",
-                    "Update Employee Managers",
                     "Remove Employee",
                     "Finish",
                 ],
@@ -53,7 +52,7 @@ const mainMenu = () => {
                                 if (err) throw err;
                                 console.log("Successfully added department!");
                                 // show the departments
-                                connection.query("SELECT * FROM departments", function (
+                                connection.query("SELECT departments.id, departments.dept_name, roles.title, roles.salary, employees.first_name, employees.last_name FROM departments LEFT JOIN roles ON (departments.id = roles.dept_id) LEFT JOIN employees ON (roles.id = employees.role_id)", function (
                                     err,
                                     res
                                 ) {
@@ -66,14 +65,14 @@ const mainMenu = () => {
                     });
                     break;
                 case "View Departments":
-                    connection.query("SELECT * FROM departments", function (err, res) {
+                    connection.query("SELECT departments.id, departments.dept_name, roles.title, roles.salary, employees.first_name, employees.last_name FROM departments LEFT JOIN roles ON (departments.id = roles.dept_id) LEFT JOIN employees ON (roles.id = employees.role_id)", function (err, res) {
                         if (err) throw err;
                         res.length > 0 && console.table(res);
                         mainMenu();
                     });
                     break;
                 case "Delete Departments":
-                    connection.query("SELECT * FROM departments", function (err, departments) {
+                    connection.query("SELECT departments.id, departments.dept_name, roles.title, roles.salary, employees.first_name, employees.last_name FROM departments LEFT JOIN roles ON (departments.id = roles.dept_id) LEFT JOIN employees ON (roles.id = employees.role_id)", function (err, departments) {
                         if (err) throw err;
                         departments.length > 0 && console.table(departments);
                         inquirer
@@ -87,11 +86,11 @@ const mainMenu = () => {
                             ])
                             .then((answer) => {
                                 connection.query(
-                                    "DELETE FROM departments WHERE id=? ",
-                                    [answer.deleteDept.slice(0, 1)],
+                                    "DELETE FROM departments WHERE id = ? ",
+                                    [answer.deleteDept.slice(0,1)],
                                     function (err, res) {
                                         if (err) throw err;
-                                        connection.query("SELECT * FROM departments", function (
+                                        connection.query("SELECT departments.id, departments.dept_name, roles.title, roles.salary, employees.first_name, employees.last_name FROM departments LEFT JOIN roles ON (departments.id = roles.dept_id) LEFT JOIN employees ON (roles.id = employees.role_id)", function (
                                             err,
                                             res
                                         ) {
@@ -140,7 +139,7 @@ const mainMenu = () => {
                                             if (err) throw err;
                                             console.log("Successfully added role!");
                                             // view the roles
-                                            connection.query("SELECT * FROM departments", function (
+                                            connection.query("SELECT roles.id, roles.title, roles.salary, departments.dept_name FROM roles LEFT JOIN departments ON (roles.dept_id = departments.id)", function (
                                                 err,
                                                 res
                                             ) {
@@ -154,14 +153,14 @@ const mainMenu = () => {
                         })
                     break;
                 case "View Roles":
-                    connection.query("SELECT * FROM roles", function (err, res) {
+                    connection.query("SELECT roles.id, roles.title, roles.salary, departments.dept_name FROM roles LEFT JOIN departments ON (roles.dept_id = departments.id)", function (err, res) {
                         if (err) throw err;
                         res.length > 0 && console.table(res);
                         mainMenu();
                     });
                     break;
                 case "Delete Roles":
-                    connection.query("SELECT * FROM roles", function (err, roles) {
+                    connection.query("SELECT roles.id, roles.title, roles.salary, departments.dept_name FROM roles LEFT JOIN departments ON (roles.dept_id = departments.id)", function (err, roles) {
                         if (err) throw err;
                         roles.length > 0 && console.table(roles);
                         inquirer
@@ -179,7 +178,7 @@ const mainMenu = () => {
                                     [answer.deleteRoles.slice(0, 1)],
                                     function (err, res) {
                                         if (err) throw err;
-                                        connection.query("SELECT * FROM roles", function (
+                                        connection.query("SELECT roles.id, roles.title, roles.salary, departments.dept_name FROM roles LEFT JOIN departments ON (roles.dept_id = departments.id)", function (
                                             err,
                                             res
                                         ) {
@@ -245,7 +244,7 @@ const mainMenu = () => {
                                                     if (err) throw err;
                                                     console.log("Successfully added an employee!");
                                                     // view the employees
-                                                    connection.query("SELECT * FROM employees", function (
+                                                    connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, roles.id, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)", function (
                                                         err,
                                                         res
                                                     ) {
@@ -260,7 +259,7 @@ const mainMenu = () => {
                         })
                     break;
                 case "Remove Employee":
-                    connection.query("SELECT * FROM employees", function (err, employees) {
+                    connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, roles.id, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)", function (err, employees) {
                         if (err) throw err;
                         employees.length > 0 && console.table(employees);
                         inquirer
@@ -278,7 +277,7 @@ const mainMenu = () => {
                                     [answer.removeEmployee.slice(0, 1)],
                                     function (err, res) {
                                         if (err) throw err;
-                                        connection.query("SELECT * FROM employees", function (
+                                        connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, roles.id, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)", function (
                                             err,
                                             res
                                         ) {
@@ -292,10 +291,10 @@ const mainMenu = () => {
                     });
                     break;
                 case "Update Employee Role":
-                    connection.query("SELECT * FROM roles",
+                    connection.query("SELECT roles.id, roles.title, roles.salary, departments.dept_name FROM roles LEFT JOIN departments ON (roles.dept_id = departments.id)",
                         function (err, roles) {
                             if (err) throw err;
-                            connection.query("SELECT * FROM employees",
+                            connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, roles.id, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)",
                                 function (err, employees) {
                                     if (err) throw err;
                                     inquirer
@@ -319,19 +318,22 @@ const mainMenu = () => {
                                                 [answers.empRole.slice(0, 1), answers.empId.slice(0, 1)],
                                                 function (err, res) {
                                                     if (err) throw err;
-                                                    res.length > 0 && console.table(res);
-                                                    mainMenu();
+                                                    console.log("Successfully updated employee!")
+                                                    connection.query(
+                                                        "SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, roles.id, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)",
+                                                        function (
+                                                            err,
+                                                            res
+                                                        ) {
+                                                            if (err) throw err;
+                                                            res.length > 0 && console.table(res);
+                                                            mainMenu();
+                                                        })
                                                 })
                                         });
                                 })
                         })
-
                     break;
-
-                // case "See Manager Employees":
-                //     inquirer.prompt(questions).then((response) => { });
-                //     break;
-
                 case "Finish":
                     connection.end();
                     break;
