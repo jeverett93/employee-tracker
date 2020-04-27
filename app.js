@@ -259,7 +259,7 @@ const mainMenu = () => {
                         })
                     break;
                 case "Remove Employee":
-                    connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, roles.id, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)", function (err, employees) {
+                    connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)", function (err, employees) {
                         if (err) throw err;
                         employees.length > 0 && console.table(employees);
                         inquirer
@@ -277,7 +277,7 @@ const mainMenu = () => {
                                     [answer.removeEmployee.slice(0, 1)],
                                     function (err, res) {
                                         if (err) throw err;
-                                        connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, roles.id, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)", function (
+                                        connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)", function (
                                             err,
                                             res
                                         ) {
