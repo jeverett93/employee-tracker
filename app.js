@@ -294,7 +294,7 @@ const mainMenu = () => {
                     connection.query("SELECT roles.id, roles.title, roles.salary, departments.dept_name FROM roles LEFT JOIN departments ON (roles.dept_id = departments.id)",
                         function (err, roles) {
                             if (err) throw err;
-                            connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, roles.id, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)",
+                            connection.query("SELECT employees.id, employees.first_name, employees.last_name, employees.role_id, roles.title, roles.salary, roles.id, departments.dept_name FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.dept_id = departments.id)",
                                 function (err, employees) {
                                     if (err) throw err;
                                     inquirer
